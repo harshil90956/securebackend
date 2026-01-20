@@ -25,32 +25,43 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Middlewares
+// =======================
+// Global Middlewares
+// =======================
 app.use(cors());
 app.use(express.json({ limit: '900mb' }));
 app.use(express.urlencoded({ extended: true, limit: '900mb' }));
 
-// Security middlewares (same as old working behavior)
+// Base security (same as before)
 app.use(ipSecurity);
 app.use(checkLoginAttempts);
 
+// =======================
 // Routes
+// =======================
+
+// Auth (NO IP whitelist here – login must work everywhere)
 app.use('/api/auth', authRoutes);
 
-app.use(checkIPWhitelist);
-app.use('/api/security', securityRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/admin', adminUsersRoutes);
+// IP-protected routes (ADMIN / SECURITY only)
+app.use('/api/security', checkIPWhitelist, securityRoutes);
+app.use('/api/admin', checkIPWhitelist, adminRoutes);
+app.use('/api/admin', checkIPWhitelist, adminUsersRoutes);
 
+// Docs & PDF routes (❗ NO IP whitelist – token based only)
 app.use('/api/docs', docsRoutes);
 app.use('/api', pdfRoutes);
 
+// =======================
 // Health check
+// =======================
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+// =======================
 // Ensure admin user exists
+// =======================
 async function ensureAdminUser() {
   const adminEmail = 'akshit@gmail.com';
   const adminPassword = 'akshit';
@@ -75,7 +86,9 @@ async function ensureAdminUser() {
   console.log('Admin user created:', adminEmail);
 }
 
+// =======================
 // Start server
+// =======================
 async function start() {
   try {
     const mongoUri =
