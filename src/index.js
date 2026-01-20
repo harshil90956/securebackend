@@ -11,7 +11,7 @@ import docsRoutes from './routes/docs.js';
 import pdfRoutes from './routes/pdfRoutes.js';
 import securityRoutes from './routes/security.js';
 import { ipSecurity, checkLoginAttempts, checkIPWhitelist } from './middleware/ipSecurity.js';
-import cors from 'cors';
+
 // Load env from backend/.env (you can also point to project root if needed)
 dotenv.config();
 
