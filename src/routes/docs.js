@@ -31,7 +31,7 @@ router.post('/upload', authMiddleware, upload.single('file'), async (req, res) =
     const file = req.file;
 
     if (!file) {
-@@ -35,167 +229,779 @@
+
       return res.status(400).json({ message: 'totalPrints must be a positive number' });
     }
 
@@ -257,7 +257,6 @@ router.get('/assigned', authMiddleware, async (req, res) => {
         sessionToken: access.sessionToken,
         documentType: isSvg ? 'svg' : 'pdf',
         status: 'completed',
-@@ -206,56 +1012,30 @@
       .sort({ createdAt: -1 })
       .exec();
 
